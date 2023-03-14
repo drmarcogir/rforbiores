@@ -1,0 +1,11 @@
+Package: rforbiores
+Type: Package
+Title: Utility functions for the forbiores analyses
+Version: 0.1.0
+Author: Marco Girardello
+Maintainer: Marco Girardello <marco.girardello@gmail.com>
+Description: The package contains a number of useful functions and support datasets
+             which can be used to run different analyses using remote sensing data.
+License: CC BY 4.0
+Encoding: UTF-8
+LazyData: true
