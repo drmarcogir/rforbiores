@@ -1,7 +1,7 @@
 ######################################################################
 #'  Function for calculating diversity metrics
 #'  The function takes the following arguments
-#'  @ x =  a tibble with all the data records contained within a given
+#'  @ x =  a tibble::tibble with all the data records contained within a given
 #'  grid cell
 #'####################################################################
 
@@ -13,7 +13,7 @@ div_calc<-function(x){
   x %>%
     # take random of sample of size n (300 but change!!!)
     # save selected data into temporary object called tmp
-    sample_n(300) %>% {.->> tmp} %>%
+    dplyr::sample_n(300) %>% {.->> tmp} %>%
     # select columns ending with _n (normalised structural variables)
     dplyr::select(ends_with("_n")) %>%
     # calculate euclidean distance matrix
@@ -24,32 +24,32 @@ div_calc<-function(x){
   # mean dissimilarity: horn-morisita index
   tmp %>%
     dplyr::select(ends_with("_n")) %>%
-    vegdist(method = "horn",diag = TRUE,upper = TRUE) %>%
+    vegan::vegdist(method = "horn",diag = TRUE,upper = TRUE) %>%
     mean()->Horn_beta
   # mean dissimilarity: Canberra
   tmp %>%
     dplyr::select(ends_with("_n")) %>%
-    vegdist(method = "canberra",diag = TRUE,upper = TRUE) %>%
+    vegan::vegdist(method = "canberra",diag = TRUE,upper = TRUE) %>%
     mean()->Canberra_beta
 
   # mean dissimilarity: Bray
   tmp %>%
     dplyr::select(ends_with("_n")) %>%
-    vegdist(method = "bray",diag = TRUE,upper = TRUE) %>%
+    vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) %>%
     mean()->bray_beta
 
   # mean dissimilarity: kulczynski
   tmp %>%
     dplyr::select(ends_with("_n")) %>%
-    vegdist(method = "kulczynski",diag = TRUE,upper = TRUE) %>%
+    vegan::vegdist(method = "kulczynski",diag = TRUE,upper = TRUE) %>%
     mean()->kulcz_beta
 
   # ------------------------------------ means and standard deviations
   tmp %>%
-    summarise_at(names(tmp)[4:13], sd, na.rm = TRUE) %>%
+    dplyr::summarise_at(names(tmp)[4:13], sd, na.rm = TRUE) %>%
     dplyr::select_all(list(~ paste0("var_", .))) %>%
-    bind_cols(tmp %>%
-                summarise_at(names(tmp)[4:13], mean, na.rm = TRUE) %>%
+    dplyr::bind_cols(tmp %>%
+                dplyr::summarise_at(names(tmp)[4:13], mean, na.rm = TRUE) %>%
                 dplyr::select_all(list(~ paste0("avg_", .))))->str_univariate
 
 
@@ -57,11 +57,11 @@ div_calc<-function(x){
 
   # convert data.frame into spatialpointsdataframe
   tmp1 = tmp
-  coordinates(tmp1) = ~x+y
-  #tmp1 <- tibble(tmp1) %>% mutate(rh98 = rh98/10000)
-  proj4string(tmp1) <- CRS("EPSG:4326")
-  tmp2 <- spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
-  f <- try(autofitVariogram(rh98 ~ 1, tmp2))
+  sp::coordinates(tmp1) = ~x+y
+  #tmp1 <- tibble::tibble(tmp1) %>% mutate(rh98 = rh98/10000)
+  sp::proj4string(tmp1) <- sp::CRS("EPSG:4326")
+  tmp2 <- sp::spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
+  f <- try(automap::autofitVariogram(rh98 ~ 1, tmp2))
   #Vario1 <- gstat::variogram(rh98 ~ 1, input2, cloud= FALSE)##,cutoff = 5000)#, )
   #f <-  fit.variogram(Varioold,  vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE)
 
@@ -74,7 +74,7 @@ div_calc<-function(x){
   nugget <- f$var_model$psill[1] # nugget
 
   # sill
-  vario_res<-tibble(sill,range,nugget)
+  vario_res<-tibble::tibble(sill,range,nugget)
 
 
   # ------------------------------------ Distance-decay
@@ -82,16 +82,16 @@ div_calc<-function(x){
   # compute full distance matrix
   tmp %>%
     dplyr::select(ends_with("_n")) %>%
-    vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
+    vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
   # compute distance matrix for coordinates
   tmp %>%
-    select(x,y) %>%
-    st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
-    st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
-    st_coordinates() %>%
+    dplyr::select(x,y) %>%
+    sf::st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
+    sf::st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
+    sf::st_coordinates() %>%
     dist()->spat_mat
   # final dataframe
-  disdecay <- tibble(distance = as.numeric(spat_mat),
+  disdecay <- tibble::tibble(distance = as.numeric(spat_mat),
                      similarity = as.numeric(1-bray_beta_full))
 
   #--------------------------------- convex hull
@@ -104,27 +104,27 @@ div_calc<-function(x){
   #--------------------------------- traditional alpha indices
   # shannon diversity index
   tmp %>%
-    pull(H) %>%
+    dplyr::pull(H) %>%
     mean()->H_alpha
 
   # Simpson diversity index
   tmp %>%
-    pull(S) %>%
+    dplyr::pull(S) %>%
     mean()->S_alpha
 
   #--------------------------------- environmental data
   tmp %>%
-    summarise_at(names(tmp)[14:59], sd, na.rm = TRUE) %>%
+    dplyr::summarise_at(names(tmp)[14:59], sd, na.rm = TRUE) %>%
     dplyr::select_all(list(~ paste0("var_", .))) %>%
-    bind_cols(tmp %>%
-                summarise_at(names(tmp)[14:59], mean, na.rm = TRUE) %>%
+    dplyr::bind_cols(tmp %>%
+                dplyr::summarise_at(names(tmp)[14:59], mean, na.rm = TRUE) %>%
                 dplyr::select_all(list(~ paste0("avg_", .))))->envdata
 
   #--------------------------------- put everything together
-  tibble(Eucl_beta,Horn_beta,Canberra_beta,bray_beta,kulcz_beta,sill,range,nugget,
+  tibble::tibble(Eucl_beta,Horn_beta,Canberra_beta,bray_beta,kulcz_beta,sill,range,nugget,
          disdecay = list(disdecay),H_alpha,S_alpha,data_samp = list(tmp)) %>%
-    bind_cols(envdata) %>%
-    bind_cols(str_univariate)->tmpres
+    dplyr::bind_cols(envdata) %>%
+    dplyr::bind_cols(str_univariate)->tmpres
 
 
   return(tmpres)
