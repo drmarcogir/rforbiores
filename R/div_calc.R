@@ -67,15 +67,13 @@ div_calc<-function(x){
 
   ## Look at the result of the fit
   # f
-  sill <- f$var_model$psill[2] # sill
+  sill <- f$psill[2] # sill
+  # [1] 0.06709838
 
-  range <- f$var_model$range[2] # range
+  range <- f$range[2] # range
+  # [1] 1216.737
 
-  nugget <- f$var_model$psill[1] # nugget
-
-  # sill
-  vario_res<-tibble::tibble(sill,range,nugget)
-
+  nugget <- f$psill[1] # nugget
 
   # ------------------------------------ Distance-decay
 
