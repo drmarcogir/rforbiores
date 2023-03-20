@@ -59,7 +59,7 @@ div_calc<-function(x){
   tmp1 = tmp
   sp::coordinates(tmp1) = ~x+y
   #tmp1 <- tibble::tibble(tmp1) %>% mutate(rh98 = rh98/10000)
-  sp::proj4string(tmp1) <- sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")
+  sp::proj4string(tmp1) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
   tmp2 <- sp::spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
   #f <- try(automap::autofitVariogram(rh98 ~ 1, tmp2))
   Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
