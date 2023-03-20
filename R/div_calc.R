@@ -65,13 +65,10 @@ div_calc<-function(x){
   Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
   f <-  gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE)
 
-  ## Look at the result of the fit
-  # f
+  ## get fit parameters
   sill <- f$psill[2] # sill
-  # [1] 0.06709838
 
   range <- f$range[2] # range
-  # [1] 1216.737
 
   nugget <- f$psill[1] # nugget
 
