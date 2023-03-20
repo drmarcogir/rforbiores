@@ -116,7 +116,7 @@ div_calc<-function(x){
                 dplyr::select_all(list(~ paste0("avg_", .))))->envdata
 
   #--------------------------------- put everything together
-  tibble::tibble(Eucl_beta,Horn_beta,Canberra_beta,bray_beta,kulcz_beta,sill,range,nugget,
+  tibble::tibble(Eucl_beta,Horn_beta,Canberra_beta,bray_beta,kulcz_beta,
          disdecay = list(disdecay),H_alpha,S_alpha,data_samp = list(tmp)) %>%
     dplyr::bind_cols(envdata) %>%
     dplyr::bind_cols(str_univariate)->tmpres
