@@ -1,4 +1,4 @@
-#' Helper function for creating an irregular sequrence of numbers
+#' Helper function for creating an irregular sequence of numbers
 #' @from = starting value
 #' @to = ending value
 #' @by = increment of the sequence
