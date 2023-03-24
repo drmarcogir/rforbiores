@@ -75,19 +75,19 @@ div_calc<-function(x){
   # ------------------------------------ Distance-decay
 
   # compute full distance matrix
-  tmp %>%
-    dplyr::select(ends_with("_n")) %>%
-    vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
-  # compute distance matrix for coordinates
-  tmp %>%
-    dplyr::select(x,y) %>%
-    sf::st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
-    sf::st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
-    sf::st_coordinates() %>%
-    dist()->spat_mat
-  # final dataframe
-  disdecay <- tibble::tibble(distance = as.numeric(spat_mat),
-                     similarity = as.numeric(1-bray_beta_full))
+  # tmp %>%
+  #   dplyr::select(ends_with("_n")) %>%
+  #   vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
+  # # compute distance matrix for coordinates
+  # tmp %>%
+  #   dplyr::select(x,y) %>%
+  #   sf::st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
+  #   sf::st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
+  #   sf::st_coordinates() %>%
+  #   dist()->spat_mat
+  # # final dataframe
+  # disdecay <- tibble::tibble(distance = as.numeric(spat_mat),
+  #                    similarity = as.numeric(1-bray_beta_full))
 
   #--------------------------------- convex hull
   #     # convex hull
@@ -116,8 +116,10 @@ div_calc<-function(x){
                 dplyr::select_all(list(~ paste0("avg_", .))))->envdata
 
   #--------------------------------- put everything together
+  #disdecay = list(disdecay)
+
   tibble::tibble(Eucl_beta,Horn_beta,Canberra_beta,bray_beta,kulcz_beta,
-         disdecay = list(disdecay),H_alpha,S_alpha,data_samp = list(tmp)) %>%
+         H_alpha,S_alpha,data_samp = list(tmp)) %>%
     dplyr::bind_cols(envdata) %>%
     dplyr::bind_cols(str_univariate)->tmpres
 
