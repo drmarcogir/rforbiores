@@ -1,0 +1,26 @@
+######################################################################
+#'  Function for preparing data for diversity calculations
+#'  @ indf = path to csv file containing the data
+#'####################################################################
+
+div_prepare <- function(data,colname){
+
+  dat<-fread("./data/input_analyses/training/training_diversityindices.csv")
+  cat("\n still preparing the data... hang in there!")
+
+  # subset column with grid name and get unique values
+  dat %>%
+    pull(colname) %>%
+    unique() %>%
+    # split into list
+    split(ceiling(seq_along(.) / 1000)) -> vl
+
+  # split data into 10 files using the lookup list
+  for (i in 1:length(vl)){
+    tmp <- dat %>%
+      filter(!!sym(colname) %in% vl[[i]])
+    write_csv(tmp,paste0("./data/input_analyses/splitfiles/file_",i,".csv"))
+  }
+}
+
+
