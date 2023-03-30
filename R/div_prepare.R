@@ -5,7 +5,7 @@
 
 div_prepare <- function(data,colname){
 
-  dat<-fread("./data/input_analyses/training/training_diversityindices.csv")
+  dat<-fread(data)
   cat("\n still preparing the data... hang in there!")
 
   # subset column with grid name and get unique values
