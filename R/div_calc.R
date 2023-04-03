@@ -64,7 +64,7 @@ div_calc<-function(x){
   #f <- try(automap::autofitVariogram(rh98 ~ 1, tmp2))
   Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
   f <-  try(gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE))
-  if(inherits(f)=="try-error"){
+  if(inherits(f,"try-error")){
     sill <- NA
     range <-NA
     nugget <-NA
@@ -96,11 +96,12 @@ div_calc<-function(x){
 
    # quasibinomial glm
    mod<-try(glm(similarity~distance,data = disdecay,family = quasibinomial))
-   if(inherits(mod)=="try-error"){
+   if(inherits(mod,"try-error")){
      slope <- NA
    } else {
      slope <- coef(mod)[2]
    }
+
 
   #--------------------------------- convex hull
   #     # convex hull
