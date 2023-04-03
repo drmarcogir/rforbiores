@@ -56,38 +56,51 @@ div_calc<-function(x){
   # ------------------------------------ variogram
 
   # convert data.frame into spatialpointsdataframe
-  #tmp1 = tmp
-  #sp::coordinates(tmp1) = ~x+y
+  tmp1 = tmp
+  sp::coordinates(tmp1) = ~x+y
   #tmp1 <- tibble::tibble(tmp1) %>% mutate(rh98 = rh98/10000)
-  #sp::proj4string(tmp1) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  #tmp2 <- sp::spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
+  sp::proj4string(tmp1) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  tmp2 <- sp::spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
   #f <- try(automap::autofitVariogram(rh98 ~ 1, tmp2))
-  #Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
-  #f <-  gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE)
+  Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
+  f <-  try(gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE))
+  if(class(f)=="try-error"){
+    sill <- NA
+    range <-NA
+    nugget <-NA
+  } else {
+    ## get fit parameters
+    sill <- f$psill[2] # sill
 
-  ## get fit parameters
-  #sill <- f$psill[2] # sill
+    range <- f$range[2] # range
 
-  #range <- f$range[2] # range
-
-  #nugget <- f$psill[1] # nugget
+    nugget <- f$psill[1] # nugget
+  }
 
   # ------------------------------------ Distance-decay
 
   # compute full distance matrix
-  # tmp %>%
-  #   dplyr::select(ends_with("_n")) %>%
-  #   vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
-  # # compute distance matrix for coordinates
-  # tmp %>%
-  #   dplyr::select(x,y) %>%
-  #   sf::st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
-  #   sf::st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
-  #   sf::st_coordinates() %>%
-  #   dist()->spat_mat
-  # # final dataframe
-  # disdecay <- tibble::tibble(distance = as.numeric(spat_mat),
-  #                    similarity = as.numeric(1-bray_beta_full))
+   tmp %>%
+     dplyr::select(ends_with("_n")) %>%
+     vegan::vegdist(method = "bray",diag = TRUE,upper = TRUE) ->bray_beta_full
+  # compute distance matrix for coordinates
+   tmp %>%
+     dplyr::select(x,y) %>%
+     sf::st_as_sf(coords = c("x","y"),crs="+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0") %>%
+     sf::st_transform(crs = "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs") %>%
+     sf::st_coordinates() %>%
+     dist()->spat_mat
+  # final dataframe
+   disdecay <- tibble::tibble(distance = as.numeric(spat_mat),
+                      similarity = as.numeric(1-bray_beta_full))
+
+   # quasibinomial glm
+   mod<-try(glm(similarity~distance,data = disdecay,family = quasibinomial))
+   if(class(mod)=="try-error"){
+     slope <- NA
+   } else {
+     slope <- coef(mod)[2]
+   }
 
   #--------------------------------- convex hull
   #     # convex hull
