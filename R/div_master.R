@@ -3,7 +3,7 @@
 #'  @ indf = path to csv file containing the data
 #'####################################################################
 
-div_master <- function(data,colname){
+div_master <- function(data,colname,splitf){
 
   #  Part 1 read in data
   dat<-fread(data)
@@ -14,7 +14,7 @@ div_master <- function(data,colname){
     pull(colname) %>%
     unique() %>%
     # split into list
-    split(ceiling(seq_along(.) / 1000)) -> vl
+    split(ceiling(seq_along(.) / 500)) -> vl
 
   # split data into 10 files using the lookup list
   for (i in 1:length(vl)){
