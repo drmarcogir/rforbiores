@@ -24,7 +24,7 @@ div_master <- function(data,colname,size){
       filter(!!sym(colname) %in% vl[[i]])
     write_csv(tmp,paste0("./data/input_analyses/splitfiles/file_",i,".csv"))
   }
-  #  Part 2 run calculations (remember to change path!)
+  #  Part 2 run calculations (uses relative paths within R project!)
   system("./code/bash/diversity_calc.sh ./data/input_analyses/splitfiles ./data/input_analyses/splitfiles_rds")
 
   # Part 3: put everything into a single dataframe
