@@ -1,9 +1,11 @@
 ######################################################################
 #'  Function for preparing data for diversity calculations
-#'  @ indf = path to csv file containing the data
+#'  @ data = path to csv file containing the data
+#'  @ colname = column name indicating grid cell size for aggregation
+#'  @ size = chunk size (i.e. number of rows for each of the smaller dataframes)
 #'####################################################################
 
-div_master <- function(data,colname,splitf,size){
+div_master <- function(data,colname,size){
 
   #  Part 1 read in data
   dat<-fread(data)
@@ -13,10 +15,10 @@ div_master <- function(data,colname,splitf,size){
   dat %>%
     pull(colname) %>%
     unique() %>%
-    # split into list
+    # split into list (see size parameter)
     split(ceiling(seq_along(.) / size)) -> vl
 
-  # split data into 10 files using the lookup list
+  # split data into x number files using the lookup list
   for (i in 1:length(vl)){
     tmp <- dat %>%
       filter(!!sym(colname) %in% vl[[i]])
