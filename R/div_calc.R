@@ -63,7 +63,7 @@ div_calc<-function(x){
   tmp2 <- sp::spTransform(tmp1, sp::CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs"))
   #f <- try(automap::autofitVariogram(rh98 ~ 1, tmp2))
   Vario1 <- gstat::variogram(rh98 ~ 1, tmp2, cloud= FALSE)##,cutoff = 5000)#, )
-  f <-  try(gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE))
+  f <-  suppressMessages(try(gstat::fit.variogram(Vario1,  gstat::vgm(c("Exp", "Mat", "Sph")), fit.kappa = TRUE),silent = TRUE))
   if(inherits(f,"try-error")){
     sill <- NA
     range <-NA
@@ -95,7 +95,7 @@ div_calc<-function(x){
                       similarity = as.numeric(1-bray_beta_full))
 
    # quasibinomial glm
-   mod<-try(glm(similarity~distance,data = disdecay,family = quasibinomial))
+   mod<-try(glm(similarity~distance,data = disdecay,family = quasibinomial),silent = TRUE)
    if(inherits(mod,"try-error")){
      slope <- NA
    } else {
