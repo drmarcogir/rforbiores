@@ -5,11 +5,11 @@
 #'  grid cell
 #'####################################################################
 
-div_calc_wrap<-function(x){
-  1:10 %>% map_dfr(\(i) div_calc(x))->res
+div_calc_wrap <- function(x, samples) {
+  1:10 %>%
+    map_dfr(~ div_calc(x, samples)) -> res
   return(res)
 }
-
 
 
 

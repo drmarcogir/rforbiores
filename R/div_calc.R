@@ -5,7 +5,7 @@
 #'  grid cell
 #'####################################################################
 
-div_calc<-function(x){
+div_calc<-function(x,samples){
 
   # ------------------------------------ dissimilarity
 
@@ -13,7 +13,7 @@ div_calc<-function(x){
   x %>%
     # take random of sample of size n (300 but change!!!)
     # save selected data into temporary object called tmp
-    dplyr::sample_n(300) %>% {.->> tmp} %>%
+    dplyr::sample_n(samples) %>% {.->> tmp} %>%
     # select columns ending with _n (normalised structural variables)
     dplyr::select(ends_with("_n")) %>%
     # calculate euclidean distance matrix
