@@ -16,6 +16,14 @@ div_create <- function(data,colname,size){
     unique() %>%
     # split into list (see size parameter)
     split(ceiling(seq_along(.) / size)) -> vl
+
+  # split data into x number files using the lookup list
+  for (i in 1:length(vl)){
+    tmp <- dat %>%
+      filter(!!sym(colname) %in% vl[[i]])
+    write_csv(tmp,paste0("./data/input_analyses/splitfiles/file_",i,".csv"))
+  }
+
 }
 
 
