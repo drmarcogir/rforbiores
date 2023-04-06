@@ -3,7 +3,7 @@
 #'####################################################################
 
 
-file_cp<-function(){
+file_cp<-function(file_list){
   # delete all  old files
   unlink("./data/input_analyses/splitfiles_tmp/*")
 
