@@ -8,7 +8,7 @@ miss_list<-function(csv,rds){
   tibble(filen = list.files(csv)) %>%
     mutate(csv_name = filen,filen = str_remove(filen,'.csv')) %>%
     anti_join(tibble(filen = list.files(rds)) %>%
-                mutate(filen = gsub("output_|\\.rds", "", filen)))
+                mutate(filen = gsub("output_|\\.rds", "", filen))) %>%
   pull(csv_name)
 }
 
