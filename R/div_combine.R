@@ -3,9 +3,7 @@
 #'  @ flist = list of files to combine together
 #'####################################################################
 
-div_combine<-function(flist){
-  # put everything into a single dataframe
-  filel<-list.files(flist,full.names = TRUE)
+div_combine<-function(filel){
 
   res <- NULL
   failed <- NULL
