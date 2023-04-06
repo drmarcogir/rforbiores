@@ -8,15 +8,31 @@ div_combine<-function(flist){
   filel<-list.files(flist,full.names = TRUE)
 
   res <- NULL
+  failed <- NULL
 
-  for(i in 1:length(filel)){
-    readRDS(filel[i]) -> tmp
-    tmp %>%
-      dplyr::select(-c(data_samp)) %>%
-      group_by(grid10km) %>%
-      summarise_all(.,mean)->tmp1
-    bind_rows(tmp1,res) -> res
+  for (i in seq_along(filel)) {
+    print(i)
+
+    # Wrap the loop body in a tryCatch block
+    tryCatch({
+      result <- readRDS(filel[i])
+
+      result %>%
+        dplyr::select(-c(data_samp)) %>%
+        group_by(grid10km) %>%
+        summarise_all(.,mean) -> tmp1
+
+      bind_rows(tmp1,res) -> res
+
+    }, error = function(e) {
+      # Handle the error here
+      cat("Error reading file", filel[i], ":", conditionMessage(e), "\n")
+      failed <<- bind_rows(failed, tibble(file = filel[i], status = "failed"))
+    })
   }
-  return(res)
+
+  finalres <- tibble(res = list(res),failed = list(failed))
+
+  return(finalres)
 }
 
