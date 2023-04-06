@@ -8,7 +8,9 @@ file_cp<-function(file_list){
   unlink("./data/input_analyses/splitfiles_tmp/*")
 
   # Use str_replace_all to change the extension to CSV in the file name
-  csv_file_names <- str_replace_all(basename(file_list), "\\.rds$", ".csv")
+  csv_file_names <- str_replace_all(basename(file_list), "|\\.rds$",
+                                    ".csv")
+  csv_file_names <- str_remove_all(csv_file_names, "output_")
 
   # Create the source file paths by concatenating the directory path with the CSV file names
   src_files <- paste0("./data/input_analyses/splitfiles/", csv_file_names)
