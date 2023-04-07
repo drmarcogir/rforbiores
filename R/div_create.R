@@ -5,9 +5,17 @@
 #'  @ size = chunk size (i.e. number of rows for each of the smaller dataframes)
 #'####################################################################
 
-div_create <- function(data,colname,size){
+div_create <- function(data,colname,size,thr){
 
   dat<-fread(data)
+
+  dat %>%
+    group_by_(colname) %>%
+    summarise(count =n()) %>%
+    filter(count >= 60) %>%
+    dplyr::select(-c(count)) %>%
+    inner_join(dat)->dat
+
   cat("\n still preparing the data... hang in there!")
 
   # subset column with grid name and get unique values
