@@ -12,7 +12,7 @@ div_create <- function(data,colname,size,thr){
   dat %>%
     group_by_(colname) %>%
     summarise(count =n()) %>%
-    filter(count >= 60) %>%
+    filter(count >= thr) %>%
     dplyr::select(-c(count)) %>%
     inner_join(dat)->dat
 
