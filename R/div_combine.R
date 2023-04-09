@@ -3,7 +3,7 @@
 #'  @ flist = list of files to combine together
 #'####################################################################
 
-div_combine<-function(filel){
+div_combine<-function(filel,colname){
 
   res <- NULL
   failed <- NULL
@@ -17,7 +17,7 @@ div_combine<-function(filel){
 
       result %>%
         dplyr::select(-c(data_samp)) %>%
-        group_by(grid10km) %>%
+        group_by_(grid10km) %>%
         summarise_all(.,mean) -> tmp1
 
       bind_rows(tmp1,res) -> res
