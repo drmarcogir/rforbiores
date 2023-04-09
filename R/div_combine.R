@@ -17,7 +17,7 @@ div_combine<-function(filel,colname){
 
       result %>%
         dplyr::select(-c(data_samp)) %>%
-        group_by_(grid10km) %>%
+        group_by_(colname) %>%
         summarise_all(.,mean) -> tmp1
 
       bind_rows(tmp1,res) -> res
