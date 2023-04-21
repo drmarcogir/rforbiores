@@ -123,10 +123,10 @@ div_calc<-function(x,samples){
 
   #--------------------------------- environmental data
   tmp %>%
-    dplyr::summarise_at(names(tmp)[14:59], sd, na.rm = TRUE) %>%
+    dplyr::summarise_at(names(tmp)[15:68], sd, na.rm = TRUE) %>%
     dplyr::select_all(list(~ paste0("var_", .))) %>%
     dplyr::bind_cols(tmp %>%
-                dplyr::summarise_at(names(tmp)[14:59], mean, na.rm = TRUE) %>%
+                dplyr::summarise_at(names(tmp)[15:68], mean, na.rm = TRUE) %>%
                 dplyr::select_all(list(~ paste0("avg_", .))))->envdata
 
   #--------------------------------- put everything together
